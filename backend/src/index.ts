@@ -37,6 +37,7 @@ app.post("/signup", async (req: express.Request, res: express.Response) => {
     }
 
 })
+
 app.post("/user/todo/:email", async (req: express.Request<{ email: string }>, res: express.Response) => {
     const title: string = req.body.title
     const description: string = req.body.description
@@ -52,9 +53,15 @@ app.post("/user/todo/:email", async (req: express.Request<{ email: string }>, re
             },
         },
         select: {
-            userEmail: true,
             title: true,
-            description: true
+            description: true,
+            user:{
+                select:{
+                    id:true,
+                    email:true,
+                }
+            }
+
         }
     })
     res.json(todo)
@@ -69,16 +76,12 @@ app.get("/user/todos/:email", async (req: express.Request<{ email: string }>, re
         res.json({ msg: "need email" })
     }
 
-    const user = await prisma.user.findUnique({
+    const todos = await prisma.todo.findMany({
         where: {
-            email,
+            userEmail:email,
         },
-        select: {
-            name: true,
-            email: true
-        }
     })
-    res.json(user)
+    res.json(todos)
 })
 
 app.listen(process.env.PORT, () => {
