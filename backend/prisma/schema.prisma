@@ -25,6 +25,6 @@ model Todo {
   title String  
   description String
   
-  userId Int 
-  user User @relation(fields:[userId], references:[id])
+  userEmail String 
+  user User @relation(fields:[userEmail], references:[email])
 }
